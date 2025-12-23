@@ -23,6 +23,7 @@ const page = usePage();
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton
+                    v-if="!item.adminOnly"
                     as-child
                     :is-active="urlIsActive(item.href, page.url)"
                     :tooltip="item.title"

@@ -15,6 +15,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
     isActive?: boolean;
+    adminOnly?: boolean;
 }
 
 export type AppPageProps<
@@ -34,6 +35,7 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    role: 'admin' | 'user';
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
