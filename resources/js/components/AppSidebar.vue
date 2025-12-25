@@ -36,6 +36,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index } from '@/routes/admin';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, UserCog } from 'lucide-vue-next';
@@ -52,7 +53,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Admin',
-        href: '#',
+        href: index(),
         icon: UserCog,
         adminOnly: user.role === 'admin',
     },
