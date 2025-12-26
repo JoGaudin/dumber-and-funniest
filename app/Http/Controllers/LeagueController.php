@@ -36,10 +36,54 @@ class LeagueController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(League $league)
+    public function show(\Illuminate\Http\Request $request, League $league)
     {
+        $commentTypes = \App\Models\CommentType::all();
+
+        $sort = $request->query('sort');
+        $direction = $request->query('direction', 'desc');
+
+        $rankings = $league->leagueUsers()
+            ->with(['user', 'scores.type'])
+            ->when($sort === 'name', function ($query) use ($direction) {
+                $query->join('users', 'users.id', '=', 'league_user.user_id')
+                    ->select('league_user.*')
+                    ->orderBy('users.name', $direction);
+            })
+            ->when(is_numeric($sort), function ($query) use ($sort, $direction) {
+                $query->addSelect([
+                    'sort_score' => \App\Models\LeagueUserCommentTypeScore::select('score')
+                        ->whereColumn('league_user_id', 'league_user.league_user_id')
+                        ->where('comment_type_id', $sort)
+                        ->limit(1)
+                ])->orderBy('sort_score', $direction);
+            })
+            ->get()
+            ->map(function ($leagueUser) {
+                return [
+                    'user_id' => $leagueUser->user->id,
+                    'name' => $leagueUser->user->name,
+                    'avatar' => $leagueUser->user->avatar,
+                    'scores' => $leagueUser->scores->mapWithKeys(function ($score) {
+                        return [$score->comment_type_id => $score->score];
+                    }),
+                ];
+            });
+
+        $comments = $league->comments()
+            ->with(['user', 'type'])
+            ->latest()
+            ->get();
+
         return Inertia::render('leagues/Show', [
-            'league' => $league->load('users'),
+            'league' => $league,
+            'commentTypes' => $commentTypes,
+            'rankings' => $rankings,
+            'comments' => $comments,
+            'filters' => [
+                'sort' => $sort,
+                'direction' => $direction,
+            ],
         ]);
     }
 

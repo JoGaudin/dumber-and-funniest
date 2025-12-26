@@ -27,9 +27,37 @@ export type AppPageProps<
     sidebarOpen: boolean;
 };
 
+export interface CommentType {
+    comment_type_id: number;
+    name: string;
+    emoji: string;
+}
+
+export interface Comment {
+    comment_id: number;
+    user_id: number;
+    league_id: number;
+    comment_type_id: number;
+    comment: string;
+    validated_nb: number;
+    revocation_nb: number;
+    created_at: string;
+    user: User;
+    type: CommentType;
+}
+
+export interface Ranking {
+    user_id: number;
+    name: string;
+    avatar?: string;
+    scores: Record<number, number>;
+}
+
 export interface League {
     league_id: number;
     name: string;
+    description?: string;
+    logo?: string;
     created_at: string;
     updated_at: string;
 }

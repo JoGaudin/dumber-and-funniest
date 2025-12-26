@@ -9,4 +9,16 @@ class LeagueUserCommentTypeScore extends Model
 {
     /** @use HasFactory<\Database\Factories\LeagueUserCommentTypeScoreFactory> */
     use HasFactory;
+
+    protected $table = 'league_user_comment_type_score';
+
+    public function type()
+    {
+        return $this->belongsTo(CommentType::class, 'comment_type_id');
+    }
+
+    public function leagueUser()
+    {
+        return $this->belongsTo(LeagueUser::class, 'league_user_id');
+    }
 }

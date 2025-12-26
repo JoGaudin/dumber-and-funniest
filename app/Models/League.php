@@ -21,4 +21,14 @@ class League extends Model
     {
         return $this->belongsToMany(User::class, 'league_user', 'league_id', 'user_id');
     }
+
+    public function leagueUsers()
+    {
+        return $this->hasMany(LeagueUser::class, 'league_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'league_id');
+    }
 }
