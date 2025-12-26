@@ -16,5 +16,6 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/admin', [AdminController::class, 'index'])->middleware(['auth', 'verified'])->name('admin.index');
+Route::post('/admin/users', [AdminController::class, 'storeUser'])->middleware(['auth', 'verified'])->name('admin.users.store');
 
 require __DIR__ . '/settings.php';

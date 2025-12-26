@@ -10,16 +10,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { ref } from 'vue';
-
-const breadcrumbs = [
-    {
-        title: 'Admin',
-        href: '/admin',
-    },
-];
-
-const currentTab = ref('users');
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-vue-next';
+import CreateUserForm from '@/components/admin/CreateUserForm.vue';
+import CreateLeagueForm from '@/components/admin/CreateLeagueForm.vue';
+import { ref, computed } from 'vue';
 
 interface User {
     id: number;
@@ -42,23 +37,31 @@ interface Comment {
     date: string;
 }
 
-const users: User[] = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User' },
+interface Props {
+    users: User[];
+    leagues: League[];
+    comments: Comment[];
+}
+
+const props = defineProps<Props>();
+
+const breadcrumbs = [
+    {
+        title: 'Admin',
+        href: '/admin',
+    },
 ];
 
-const leagues: League[] = [
-    { id: 1, name: 'Premier League', sport: 'Soccer', teams: 20 },
-    { id: 2, name: 'NBA', sport: 'Basketball', teams: 30 },
-    { id: 3, name: 'NFL', sport: 'Football', teams: 32 },
-];
+const currentTab = ref('users');
 
-const comments: Comment[] = [
-    { id: 1, user: 'John Doe', content: 'Great match yesterday!', date: '2023-10-01' },
-    { id: 2, user: 'Jane Smith', content: 'Who do you think will win?', date: '2023-10-02' },
-    { id: 3, user: 'Bob Johnson', content: 'I disagree with the referee.', date: '2023-10-03' },
-];
+const buttonLabel = computed(() => {
+    switch (currentTab.value) {
+        case 'users': return 'Add User';
+        case 'leagues': return 'Add League';
+        case 'comments': return 'Add Comment';
+        default: return 'Add';
+    }
+});
 </script>
 
 <template>
@@ -66,7 +69,25 @@ const comments: Comment[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-6">
-            <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+                
+                <CreateUserForm v-if="currentTab === 'users'">
+                    <Button>
+                        <Plus class="mr-2 h-4 w-4" /> {{ buttonLabel }}
+                    </Button>
+                </CreateUserForm>
+
+                <CreateLeagueForm v-else-if="currentTab === 'leagues'" :users="users">
+                    <Button>
+                        <Plus class="mr-2 h-4 w-4" /> {{ buttonLabel }}
+                    </Button>
+                </CreateLeagueForm>
+
+                <Button v-else disabled>
+                    <Plus class="mr-2 h-4 w-4" /> {{ buttonLabel }}
+                </Button>
+            </div>
             
             <Tabs v-model="currentTab" class="w-full">
                 <TabsList class="flex w-full">

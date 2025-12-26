@@ -41,15 +41,20 @@ import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid, UserCog } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
+import { onMounted } from 'vue';
+import { log } from 'console';
 const page = usePage();
 const user = page.props.auth.user;
+
+onMounted(() => {
+    console.log('User role:', user.role);
+});
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
-        adminOnly: user.role === 'admin',
     },
     {
         title: 'Admin',
