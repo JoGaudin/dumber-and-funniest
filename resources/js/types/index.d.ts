@@ -27,6 +27,13 @@ export type AppPageProps<
     sidebarOpen: boolean;
 };
 
+export interface League {
+    league_id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -36,6 +43,7 @@ export interface User {
     created_at: string;
     updated_at: string;
     role: 'admin' | 'user';
+    leagues?: League[];
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
