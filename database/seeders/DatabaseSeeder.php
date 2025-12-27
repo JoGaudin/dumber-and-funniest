@@ -14,14 +14,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Create Admin
         User::firstOrCreate(
-            ['email' => 'john.doe@example.com'],
+            ['email' => 'admin@example.com'],
             [
-            'name' => 'John Doe',
-            'password' => Hash::make('secret'),  
-            'email_verified_at' => now(),  
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'role' => 'admin',
+                'password_set_at' => now(),
+            ]
+        );
+
+        // Create Regular User
+        $user = User::firstOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'Regular User',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'role' => 'user',
+                'password_set_at' => now(),
+            ]
+        );
+
+        // Create League
+        $league = \App\Models\League::create([
+            'name' => 'Main League',
+            'description' => 'The primary league for testing.',
         ]);
+
+        // Link users to league
+        $league->users()->attach([1, 2]);
+
+        // Create Comment Types
+        \App\Models\CommentType::create(['name' => 'Intelligent', 'emoji' => '🧠']);
+        \App\Models\CommentType::create(['name' => 'Drole', 'emoji' => '😂']);
     }
 }

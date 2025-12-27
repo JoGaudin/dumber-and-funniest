@@ -29,7 +29,57 @@ class AnswerController extends Controller
      */
     public function store(StoreAnswerRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $userId = auth()->id();
+
+        // Check if user already answered this comment
+        $exists = Answer::where('comment_id', $validated['comment_id'])
+            ->where('user_id', $userId)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['answer' => 'You have already answered this comment.']);
+        }
+
+        $comment = \App\Models\Comment::findOrFail($validated['comment_id']);
+
+        // Create answer
+        Answer::create([
+            'league_id' => $validated['league_id'],
+            'user_id' => $userId,
+            'comment_id' => $validated['comment_id'],
+            'answer' => $validated['answer'],
+        ]);
+
+        // Update comment counts
+        if ($validated['answer'] === 'validation') {
+            $comment->increment('validated_nb');
+        } else {
+            $comment->increment('revocation_nb');
+        }
+
+        // Update score in league_user_comment_type_score
+        $leagueUser = \App\Models\LeagueUser::where('league_id', $comment->league_id)
+            ->where('user_id', $comment->user_id)
+            ->first();
+
+        if ($leagueUser) {
+            $scoreRecord = \App\Models\LeagueUserCommentTypeScore::firstOrCreate(
+                [
+                    'league_user_id' => $leagueUser->league_user_id,
+                    'comment_type_id' => $comment->comment_type_id,
+                ],
+                ['score' => 0]
+            );
+
+            if ($validated['answer'] === 'validation') {
+                $scoreRecord->increment('score');
+            } else {
+                $scoreRecord->decrement('score');
+            }
+        }
+
+        return back()->with('success', 'Answer submitted successfully.');
     }
 
     /**

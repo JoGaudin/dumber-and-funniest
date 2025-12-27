@@ -44,6 +44,7 @@ export interface Comment {
     created_at: string;
     user: User;
     type: CommentType;
+    user_answer: 'validation' | 'revocation' | null;
 }
 
 export interface Ranking {

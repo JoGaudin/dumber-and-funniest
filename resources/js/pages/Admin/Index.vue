@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -21,6 +21,7 @@ interface User {
     name: string;
     email: string;
     role: string;
+    password_set_at: string | null;
 }
 
 interface League {
@@ -62,6 +63,12 @@ const buttonLabel = computed(() => {
         default: return 'Add';
     }
 });
+const sendInvitation = (userId: number) => {
+    console.log(`Sending invitation to user ID: ${userId}`);
+    router.post(`/admin/users/${userId}/invite`, {}, {
+        preserveScroll: true,
+    });
+};
 </script>
 
 <template>
@@ -104,7 +111,8 @@ const buttonLabel = computed(() => {
                                     <TableHead class="w-[100px]">ID</TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead class="text-right">Role</TableHead>
+                                    <TableHead>Role</TableHead>
+                                    <TableHead class="text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -112,7 +120,21 @@ const buttonLabel = computed(() => {
                                     <TableCell class="font-medium">{{ user.id }}</TableCell>
                                     <TableCell>{{ user.name }}</TableCell>
                                     <TableCell>{{ user.email }}</TableCell>
-                                    <TableCell class="text-right">{{ user.role }}</TableCell>
+                                    <TableCell>{{ user.role }}</TableCell>
+                                    <TableCell class="text-right">
+                                        <Button 
+                                            v-if="!user.password_set_at" 
+                                            size="sm" 
+                                            variant="outline"
+                                            class="cursor-pointer"
+                                            @click="sendInvitation(user.id)"
+                                        >
+                                            Send Invitation
+                                        </Button>
+                                        <span v-else class="text-xs text-muted-foreground">
+                                            Subscribed
+                                        </span>
+                                    </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>

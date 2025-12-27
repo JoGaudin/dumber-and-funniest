@@ -13,7 +13,7 @@
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :items="filteredNavItems" />
             <NavLeagues :leagues="user.leagues || []" />
         </SidebarContent>
 
@@ -41,15 +41,12 @@ import { dashboard } from '@/routes';
 import { index } from '@/routes/admin';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, UserCog } from 'lucide-vue-next';
+import { LayoutGrid, UserCog } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
-import { onMounted } from 'vue';
+import { computed } from 'vue';
+
 const page = usePage();
 const user = page.props.auth.user;
-
-onMounted(() => {
-    console.log(user);
-});
 
 const mainNavItems: NavItem[] = [
     {
@@ -61,7 +58,16 @@ const mainNavItems: NavItem[] = [
         title: 'Admin',
         href: index(),
         icon: UserCog,
-        adminOnly: user.role === 'admin',
+        adminOnly: true,
     },
 ];
+
+const filteredNavItems = computed(() => {
+    return mainNavItems.filter((item) => {
+        if (item.adminOnly && user.role !== 'admin') {
+            return false;
+        }
+        return true;
+    });
+});
 </script>

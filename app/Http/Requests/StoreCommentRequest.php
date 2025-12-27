@@ -11,7 +11,7 @@ class StoreCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'league_id' => 'required|exists:leagues,league_id',
+            'user_id' => 'required|exists:users,id',
+            'comment_type_id' => 'required|exists:comment_types,comment_type_id',
+            'comment' => 'required|string|max:1000',
         ];
     }
 }

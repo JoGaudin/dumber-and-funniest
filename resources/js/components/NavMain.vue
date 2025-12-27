@@ -9,6 +9,7 @@ import {
 import { urlIsActive } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
 defineProps<{
     items: NavItem[];
@@ -23,7 +24,6 @@ const page = usePage();
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton
-                    v-if="item.adminOnly ? item.adminOnly : true"
                     as-child
                     :is-active="urlIsActive(item.href, page.url)"
                     :tooltip="item.title"

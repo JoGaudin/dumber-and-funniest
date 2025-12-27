@@ -73,7 +73,18 @@ class LeagueController extends Controller
         $comments = $league->comments()
             ->with(['user', 'type'])
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($comment) {
+                $userAnswer = \App\Models\Answer::where('comment_id', $comment->comment_id)
+                    ->where('user_id', auth()->id())
+                    ->first();
+
+                return array_merge($comment->toArray(), [
+                    'user_answer' => $userAnswer ? $userAnswer->answer : null,
+                    'user' => $comment->user,
+                    'type' => $comment->type,
+                ]);
+            });
 
         return Inertia::render('leagues/Show', [
             'league' => $league,

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import AppSidebarLayout from '@/layouts/app/AppSidebarLayout.vue';
 import { type League, type User, type CommentType, type Ranking, type Comment } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
-import { Trophy, Users, MessageSquare, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-vue-next';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import { Trophy, Users, MessageSquare, ArrowUpDown, ChevronUp, ChevronDown, Plus, Check, X } from 'lucide-vue-next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,7 +14,26 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { computed } from 'vue';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { computed, ref } from 'vue';
 
 interface Props {
     league: League;
@@ -28,6 +47,12 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const page = usePage();
+const currentUser = computed(() => (page.props as any).auth.user);
+
+const selectableUsers = computed(() => {
+    return props.rankings.filter(ranking => ranking.user_id !== currentUser.value?.id);
+});
 
 const breadcrumbs = [
     {
@@ -39,6 +64,7 @@ const breadcrumbs = [
         href: `/league/${props.league.league_id}`,
     },
 ];
+
 const sortColumn = computed(() => props.filters.sort);
 const sortDirection = computed(() => props.filters.direction);
 
@@ -51,6 +77,32 @@ const toggleSort = (column: number | 'name') => {
         { preserveState: true, preserveScroll: true }
     );
 };
+const isDialogOpen = ref(false);
+
+const form = useForm({
+    league_id: props.league.league_id,
+    user_id: '',
+    comment_type_id: '',
+    comment: '',
+});
+
+const submitComment = () => {
+    form.post('/comments', {
+        onSuccess: () => {
+            isDialogOpen.value = false;
+            form.reset('user_id', 'comment_type_id', 'comment');
+        },
+    });
+};
+const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') => {
+    router.post('/answers', {
+        league_id: props.league.league_id,
+        comment_id: commentId,
+        answer: answer,
+    }, {
+        preserveScroll: true,
+    });
+};
 </script>
 
 <template>
@@ -58,14 +110,89 @@ const toggleSort = (column: number | 'name') => {
 
     <AppSidebarLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-1 flex-col gap-4 p-4">
-            <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <Trophy class="h-6 w-6 text-primary" />
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                        <Trophy class="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">{{ league.name }}</h1>
+                        <p class="text-muted-foreground">{{ league.description || 'Manage and view league details' }}</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-2xl font-bold tracking-tight">{{ league.name }}</h1>
-                    <p class="text-muted-foreground">{{ league.description || 'Manage and view league details' }}</p>
-                </div>
+
+                <Dialog v-model:open="isDialogOpen">
+                    <DialogTrigger as-child>
+                        <Button>
+                            <Plus class="mr-2 h-4 w-4" />
+                            Submit Comment
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent class="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Submit a Comment</DialogTitle>
+                            <DialogDescription>
+                                Share your thoughts about a league member.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <form @submit.prevent="submitComment" class="grid gap-4 py-4">
+                            <div class="grid gap-2">
+                                <Label for="user">User</Label>
+                                <Select v-model="form.user_id">
+                                    <SelectTrigger id="user">
+                                        <SelectValue placeholder="Select a user" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem 
+                                            v-for="ranking in selectableUsers" 
+                                            :key="ranking.user_id" 
+                                            :value="ranking.user_id.toString()"
+                                        >
+                                            {{ ranking.name }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <p v-if="form.errors.user_id" class="text-xs text-destructive">{{ form.errors.user_id }}</p>
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label for="type">Comment Type</Label>
+                                <Select v-model="form.comment_type_id">
+                                    <SelectTrigger id="type">
+                                        <SelectValue placeholder="Select a type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem 
+                                            v-for="type in commentTypes" 
+                                            :key="type.comment_type_id" 
+                                            :value="type.comment_type_id.toString()"
+                                        >
+                                            {{ type.emoji }} {{ type.name }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <p v-if="form.errors.comment_type_id" class="text-xs text-destructive">{{ form.errors.comment_type_id }}</p>
+                            </div>
+
+                            <div class="grid gap-2">
+                                <Label for="comment">Comment</Label>
+                                <Textarea 
+                                    id="comment" 
+                                    v-model="form.comment" 
+                                    placeholder="Write your comment here..."
+                                    class="min-h-[100px]"
+                                />
+                                <p v-if="form.errors.comment" class="text-xs text-destructive">{{ form.errors.comment }}</p>
+                            </div>
+
+                            <DialogFooter>
+                                <Button type="submit" :disabled="form.processing">
+                                    {{ form.processing ? 'Submitting...' : 'Submit Comment' }}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
 
             <Tabs default-value="rankings" class="w-full">
@@ -180,12 +307,30 @@ const toggleSort = (column: number | 'name') => {
                                             {{ comment.comment }}
                                         </p>
                                         <div class="flex items-center gap-4 pt-2">
-                                            <div class="flex items-center gap-1 text-xs text-green-600">
+                                            <button 
+                                                @click="submitAnswer(comment.comment_id, 'validation')"
+                                                :disabled="comment.user_answer !== null"
+                                                class="flex items-center gap-1 text-xs transition-colors"
+                                                :class="[
+                                                    comment.user_answer === 'validation' ? 'text-green-600 font-bold' : 'text-muted-foreground hover:text-green-600',
+                                                    comment.user_answer !== null ? 'cursor-default' : 'cursor-pointer'
+                                                ]"
+                                            >
+                                                <Check class="h-3 w-3" />
                                                 <span class="font-bold">{{ comment.validated_nb }}</span> validations
-                                            </div>
-                                            <div class="flex items-center gap-1 text-xs text-red-600">
+                                            </button>
+                                            <button 
+                                                @click="submitAnswer(comment.comment_id, 'revocation')"
+                                                :disabled="comment.user_answer !== null"
+                                                class="flex items-center gap-1 text-xs transition-colors"
+                                                :class="[
+                                                    comment.user_answer === 'revocation' ? 'text-red-600 font-bold' : 'text-muted-foreground hover:text-red-600',
+                                                    comment.user_answer !== null ? 'cursor-default' : 'cursor-pointer'
+                                                ]"
+                                            >
+                                                <X class="h-3 w-3" />
                                                 <span class="font-bold">{{ comment.revocation_nb }}</span> revocations
-                                            </div>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

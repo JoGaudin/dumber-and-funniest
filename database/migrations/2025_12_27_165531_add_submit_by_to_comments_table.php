@@ -10,10 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('league_user', function (Blueprint $table) {
-            $table->id('league_user_id');
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('league_id')->constrained('leagues', 'league_id');
+        Schema::table('comments', function (Blueprint $table) {
+            $table->foreignId('submit_by')->nullable()->constrained('users')->onDelete('set null');
         });
     }
 
@@ -22,6 +20,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('league_user');
+        Schema::table('comments', function (Blueprint $table) {
+            $table->dropForeign(['submit_by']);
+            $table->dropColumn('submit_by');
+        });
     }
 };

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,10 +13,10 @@ return new class extends Migration
         Schema::create('answers', function (Blueprint $table) {
             $table->id('answer_id');
             $table->timestamps();
-            $table->foreignId('league_id')->constrained('leagues');
+            $table->foreignId('league_id')->constrained('leagues', 'league_id');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('comment_id')->constrained('comments');
-            $table->text('answer');
+            $table->foreignId('comment_id')->constrained('comments', 'comment_id');
+            $table->string('answer');
         });
     }
 

@@ -10,6 +10,12 @@ class LeagueUserCommentTypeScore extends Model
     /** @use HasFactory<\Database\Factories\LeagueUserCommentTypeScoreFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'league_user_id',
+        'comment_type_id',
+        'score',
+    ];
+
     protected $table = 'league_user_comment_type_score';
 
     public function type()

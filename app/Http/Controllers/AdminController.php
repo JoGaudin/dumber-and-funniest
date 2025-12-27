@@ -11,6 +11,8 @@ use App\Models\Comment;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use App\Notifications\UserInvitation;
 
 class AdminController extends Controller
 {
@@ -21,6 +23,23 @@ class AdminController extends Controller
             'leagues' => League::all(),
             'comments' => Comment::all(),
         ]);
+    }
+
+    public function sendInvitation(User $user)
+    {
+        if ($user->password_set_at) {
+            return redirect()->back()->with('error', 'User already has a password set.');
+        }
+
+        $url = URL::temporarySignedRoute(
+            'password.setup',
+            now()->addHours(24),
+            ['user' => $user->id]
+        );
+
+        $user->notify(new UserInvitation($url));
+
+        return redirect()->back()->with('success', 'Invitation sent successfully.');
     }
 
     public function storeUser(Request $request)
@@ -43,6 +62,7 @@ class AdminController extends Controller
             'role' => $validated['role'],
             'picture' => $picturePath,
             'password' => Hash::make(Str::random(12)),
+            'password_set_at' => null,
         ]);
 
         return redirect()->back()->with('success', 'User created successfully.');

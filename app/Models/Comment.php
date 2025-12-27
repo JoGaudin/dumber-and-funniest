@@ -12,9 +12,24 @@ class Comment extends Model
 
     protected $primaryKey = 'comment_id';
 
+    protected $fillable = [
+        'league_id',
+        'user_id',
+        'comment_type_id',
+        'comment',
+        'submit_by',
+        'validated_nb',
+        'revocation_nb',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function submitter()
+    {
+        return $this->belongsTo(User::class, 'submit_by');
     }
 
     public function type()

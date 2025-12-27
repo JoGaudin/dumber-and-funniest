@@ -29,7 +29,19 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        Comment::create([
+            'league_id' => $validated['league_id'],
+            'user_id' => $validated['user_id'],
+            'comment_type_id' => $validated['comment_type_id'],
+            'comment' => $validated['comment'],
+            'submit_by' => auth()->id(),
+            'validated_nb' => 0,
+            'revocation_nb' => 0,
+        ]);
+
+        return back()->with('success', 'Comment submitted successfully.');
     }
 
     /**

@@ -11,7 +11,7 @@ class StoreAnswerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreAnswerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'league_id' => 'required|exists:leagues,league_id',
+            'comment_id' => 'required|exists:comments,comment_id',
+            'answer' => 'required|string|in:validation,revocation',
         ];
     }
 }

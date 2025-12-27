@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -20,9 +19,9 @@ return new class extends Migration
         });
         Schema::create('comments', function (Blueprint $table) {
             $table->id('comment_id');
-            $table->foreignId('league_id')->constrained('leagues');
+            $table->foreignId('league_id')->constrained('leagues', 'league_id');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('comment_type_id')->constrained('comment_types');
+            $table->foreignId('comment_type_id')->constrained('comment_types', 'comment_type_id');
             $table->text('comment');
             $table->integer('validated_nb')->default(0);
             $table->integer('revocation_nb')->default(0);
