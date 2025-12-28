@@ -33,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
         Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
         Route::post('/admin/users/{user}/invite', [AdminController::class, 'sendInvitation'])->name('admin.users.invite');
+        Route::post('/admin/leagues', [AdminController::class, 'storeLeague'])->name('admin.leagues.store');
+        Route::post('/admin/leagues/{league}', [AdminController::class, 'updateLeague'])->name('admin.leagues.update');
     });
 });
 

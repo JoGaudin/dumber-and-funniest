@@ -14,6 +14,14 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-vue-next';
 import CreateUserForm from '@/components/admin/CreateUserForm.vue';
 import CreateLeagueForm from '@/components/admin/CreateLeagueForm.vue';
+import EditLeagueForm from '@/components/admin/EditLeagueForm.vue';
+import {
+    TagsInput,
+    TagsInputInput,
+    TagsInputItem,
+    TagsInputItemDelete,
+    TagsInputItemText,
+} from '@/components/ui/tags-input';
 import { ref, computed } from 'vue';
 
 interface User {
@@ -25,10 +33,11 @@ interface User {
 }
 
 interface League {
-    id: number;
+    league_id: number;
     name: string;
-    sport: string;
-    teams: number;
+    description: string;
+    logo: string | null;
+    users: User[];
 }
 
 interface Comment {
@@ -148,16 +157,30 @@ const sendInvitation = (userId: number) => {
                                 <TableRow>
                                     <TableHead class="w-[100px]">ID</TableHead>
                                     <TableHead>Name</TableHead>
-                                    <TableHead>Sport</TableHead>
-                                    <TableHead class="text-right">Teams</TableHead>
+                                    <TableHead>Description</TableHead>
+                                    <TableHead>Users</TableHead>
+                                    <TableHead class="text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                <TableRow v-for="league in leagues" :key="league.id">
-                                    <TableCell class="font-medium">{{ league.id }}</TableCell>
+                                <TableRow v-for="league in leagues" :key="league.league_id">
+                                    <TableCell class="font-medium">{{ league.league_id }}</TableCell>
                                     <TableCell>{{ league.name }}</TableCell>
-                                    <TableCell>{{ league.sport }}</TableCell>
-                                    <TableCell class="text-right">{{ league.teams }}</TableCell>
+                                    <TableCell class="max-w-xs truncate">{{ league.description }}</TableCell>
+                                    <TableCell>
+                                        <TagsInput :model-value="league.users.map(u => u.name)" disabled class="border-none p-0 shadow-none bg-transparent">
+                                            <div class="flex flex-wrap gap-1">
+                                                <TagsInputItem v-for="user in league.users" :key="user.id" :value="user.name" class="h-6 px-2 py-0">
+                                                    <TagsInputItemText class="text-[10px]" />
+                                                </TagsInputItem>
+                                            </div>
+                                        </TagsInput>
+                                    </TableCell>
+                                    <TableCell class="text-right">
+                                        <EditLeagueForm :league="league" :users="users">
+                                            <Button size="sm" variant="outline">Edit</Button>
+                                        </EditLeagueForm>
+                                    </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>

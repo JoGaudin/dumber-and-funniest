@@ -293,10 +293,15 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                                     </Avatar>
                                     <div class="flex-1 space-y-1">
                                         <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <span class="font-semibold">{{ comment.user.name }}</span>
-                                                <span class="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary flex items-center gap-1">
-                                                    {{ comment.type.emoji }} {{ comment.type.name }}
+                                            <div class="flex flex-col">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="font-semibold">{{ comment.user.name }}</span>
+                                                    <span class="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary flex items-center gap-1">
+                                                        {{ comment.type.emoji }} {{ comment.type.name }}
+                                                    </span>
+                                                </div>
+                                                <span class="text-xs text-muted-foreground">
+                                                    Submitted by {{ comment.submitter.name }}
                                                 </span>
                                             </div>
                                             <span class="text-xs text-muted-foreground">

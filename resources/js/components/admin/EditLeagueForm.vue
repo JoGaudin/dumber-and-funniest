@@ -35,24 +35,33 @@ interface User {
     name: string;
 }
 
+interface League {
+    league_id: number;
+    name: string;
+    description: string;
+    logo: string | null;
+    users: User[];
+}
+
 const props = defineProps<{
+    league: League;
     users: User[];
 }>();
 
 const isOpen = ref(false);
 
 const form = useForm({
-    name: '',
-    description: '',
+    name: props.league.name,
+    description: props.league.description,
     logo: null as File | null,
-    users: [] as number[],
+    users: props.league.users.map(u => u.id),
+    _method: 'POST',
 });
 
 const submit = () => {
-    form.post('/admin/leagues', {
+    form.post(`/admin/leagues/${props.league.league_id}`, {
         onSuccess: () => {
             isOpen.value = false;
-            form.reset();
         },
     });
 };
@@ -91,33 +100,36 @@ const getUserName = (userId: number) => {
         </DialogTrigger>
         <DialogContent class="max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Add League</DialogTitle>
+                <DialogTitle>Edit League</DialogTitle>
                 <DialogDescription>
-                    Create a new league and add users to it.
+                    Update league details and manage members.
                 </DialogDescription>
             </DialogHeader>
             <form @submit.prevent="submit" class="grid gap-4 py-4">
                 <div class="grid gap-2">
-                    <Label for="name">
+                    <Label for="edit-name">
                         Name <span class="text-red-500">*</span>
                     </Label>
-                    <Input id="name" v-model="form.name" required />
+                    <Input id="edit-name" v-model="form.name" required />
                     <div v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</div>
                 </div>
                 <div class="grid gap-2">
-                    <Label for="description">
+                    <Label for="edit-description">
                         Description <span class="text-red-500">*</span>
                     </Label>
-                    <Textarea id="description" v-model="form.description" required />
+                    <Textarea id="edit-description" v-model="form.description" required />
                     <div v-if="form.errors.description" class="text-xs text-red-500">{{ form.errors.description }}</div>
                 </div>
                 <div class="grid gap-2">
-                    <Label for="logo">Logo</Label>
-                    <Input id="logo" type="file" @change="handleLogoChange" accept="image/*" />
+                    <Label for="edit-logo">Logo</Label>
+                    <div v-if="league.logo" class="mb-2">
+                        <img :src="`/storage/${league.logo}`" alt="Current Logo" class="h-12 w-12 object-cover rounded" />
+                    </div>
+                    <Input id="edit-logo" type="file" @change="handleLogoChange" accept="image/*" />
                     <div v-if="form.errors.logo" class="text-xs text-red-500">{{ form.errors.logo }}</div>
                 </div>
                 <div class="grid gap-2">
-                    <Label>Users</Label>
+                    <Label>Members</Label>
                     
                     <div class="flex flex-col gap-2">
                         <Select @update:model-value="addUser">
@@ -140,7 +152,7 @@ const getUserName = (userId: number) => {
                             </div>
                         </TagsInput>
                     </div>
-
+                    
                     <div v-if="form.errors.users" class="text-xs text-red-500">{{ form.errors.users }}</div>
                 </div>
                 <DialogFooter>

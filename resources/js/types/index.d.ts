@@ -43,6 +43,7 @@ export interface Comment {
     revocation_nb: number;
     created_at: string;
     user: User;
+    submitter: User;
     type: CommentType;
     user_answer: 'validation' | 'revocation' | null;
 }

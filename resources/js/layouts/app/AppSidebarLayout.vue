@@ -5,6 +5,7 @@ import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
 import { Toaster } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/toast/use-toast';
+import InstallPrompt from '@/components/InstallPrompt.vue';
 import type { BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { watch } from 'vue';
@@ -50,4 +51,5 @@ watch(
         </AppContent>
     </AppShell>
     <Toaster />
+    <InstallPrompt />
 </template>

@@ -16,6 +16,8 @@ class LeagueUserCommentTypeScore extends Model
         'score',
     ];
 
+    public $timestamps = false;
+
     protected $table = 'league_user_comment_type_score';
 
     public function type()

@@ -71,7 +71,7 @@ class LeagueController extends Controller
             });
 
         $comments = $league->comments()
-            ->with(['user', 'type'])
+            ->with(['user', 'type', 'submitter'])
             ->latest()
             ->get()
             ->map(function ($comment) {
@@ -83,6 +83,7 @@ class LeagueController extends Controller
                     'user_answer' => $userAnswer ? $userAnswer->answer : null,
                     'user' => $comment->user,
                     'type' => $comment->type,
+                    'submitter' => $comment->submitter,
                 ]);
             });
 

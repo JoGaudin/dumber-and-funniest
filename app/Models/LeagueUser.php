@@ -10,6 +10,13 @@ class LeagueUser extends Model
     /** @use HasFactory<\Database\Factories\LeagueUserFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'league_id',
+        'user_id',
+    ];
+
+    public $timestamps = false;
+
     protected $table = 'league_user';
     protected $primaryKey = 'league_user_id';
 
