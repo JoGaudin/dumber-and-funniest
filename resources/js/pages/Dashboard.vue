@@ -55,9 +55,9 @@ const breadcrumbs: BreadcrumbItem[] = [
             <div v-if="leagues.length === 0" class="flex flex-1 items-center justify-center rounded-lg border border-dashed p-8 text-center">
                 <div class="flex flex-col items-center gap-2">
                     <Trophy class="h-12 w-12 text-muted-foreground/50" />
-                    <h3 class="text-lg font-semibold">No leagues yet</h3>
+                    <h3 class="text-lg font-semibold">Pas de ligue... (sans amis)</h3>
                     <p class="text-sm text-muted-foreground">
-                        You haven't joined any leagues yet.
+                        Tu n'as pas été ajouté à une ligue pour le moment.
                     </p>
                 </div>
             </div>

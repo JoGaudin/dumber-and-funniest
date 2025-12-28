@@ -117,7 +117,7 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold tracking-tight">{{ league.name }}</h1>
-                        <p class="text-muted-foreground">{{ league.description || 'Manage and view league details' }}</p>
+                        <p class="text-muted-foreground">{{ league.description || 'Regarde les résultats de ta ligue' }}</p>
                     </div>
                 </div>
 
@@ -125,22 +125,22 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                     <DialogTrigger as-child>
                         <Button>
                             <Plus class="mr-2 h-4 w-4" />
-                            Submit Comment
+                            Ajoute une remarque
                         </Button>
                     </DialogTrigger>
                     <DialogContent class="sm:max-w-[425px]">
                         <DialogHeader>
-                            <DialogTitle>Submit a Comment</DialogTitle>
+                            <DialogTitle>Ajoute une remarque</DialogTitle>
                             <DialogDescription>
-                                Share your thoughts about a league member.
+                                Partage une phrase drôle ou un commentaire intelligent sur un membre de ta ligue.
                             </DialogDescription>
                         </DialogHeader>
                         <form @submit.prevent="submitComment" class="grid gap-4 py-4">
                             <div class="grid gap-2">
-                                <Label for="user">User</Label>
+                                <Label for="user">Joueur</Label>
                                 <Select v-model="form.user_id">
                                     <SelectTrigger id="user">
-                                        <SelectValue placeholder="Select a user" />
+                                        <SelectValue placeholder="Sélectionne un joueur" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem 
@@ -156,10 +156,10 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="type">Comment Type</Label>
+                                <Label for="type">Type de remarque</Label>
                                 <Select v-model="form.comment_type_id">
                                     <SelectTrigger id="type">
-                                        <SelectValue placeholder="Select a type" />
+                                        <SelectValue placeholder="Sélectionne une remarque" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem 
@@ -175,11 +175,11 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                             </div>
 
                             <div class="grid gap-2">
-                                <Label for="comment">Comment</Label>
+                                <Label for="comment">Commentaire</Label>
                                 <Textarea 
                                     id="comment" 
                                     v-model="form.comment" 
-                                    placeholder="Write your comment here..."
+                                    placeholder="Écris ton commentaire ici..."
                                     class="min-h-[100px]"
                                 />
                                 <p v-if="form.errors.comment" class="text-xs text-destructive">{{ form.errors.comment }}</p>
@@ -187,7 +187,7 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
 
                             <DialogFooter>
                                 <Button type="submit" :disabled="form.processing">
-                                    {{ form.processing ? 'Submitting...' : 'Submit Comment' }}
+                                    {{ form.processing ? 'En cours...' : 'Valider' }}
                                 </Button>
                             </DialogFooter>
                         </form>
@@ -199,18 +199,18 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                 <TabsList class="grid w-full max-w-[400px] grid-cols-2">
                     <TabsTrigger value="rankings">
                         <Trophy class="mr-2 h-4 w-4" />
-                        Rankings
+                        Classement
                     </TabsTrigger>
                     <TabsTrigger value="comments">
                         <MessageSquare class="mr-2 h-4 w-4" />
-                        Comments
+                        Remarques
                     </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="rankings" class="mt-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>League Rankings</CardTitle>
+                            <CardTitle>Classement de la ligue</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Table>
@@ -221,7 +221,7 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                                             @click="toggleSort('name')"
                                         >
                                             <div class="flex items-center gap-2">
-                                                User
+                                                Joueur
                                                 <component 
                                                     :is="sortColumn === 'name' ? (sortDirection === 'asc' ? ChevronUp : ChevronDown) : ArrowUpDown" 
                                                     class="h-4 w-4 text-muted-foreground"
@@ -270,7 +270,7 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                                     </TableRow>
                                     <TableRow v-if="rankings.length === 0">
                                         <TableCell :colspan="commentTypes.length + 1" class="text-center py-8 text-muted-foreground">
-                                            No members in this league yet.
+                                            Pas encore de membre dans la ligue
                                         </TableCell>
                                     </TableRow>
                                 </TableBody>
@@ -282,7 +282,7 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                 <TabsContent value="comments" class="mt-4">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Recent Comments</CardTitle>
+                            <CardTitle>Remarques</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div class="space-y-6">
@@ -301,7 +301,7 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                                                     </span>
                                                 </div>
                                                 <span class="text-xs text-muted-foreground">
-                                                    Submitted by {{ comment.submitter.name }}
+                                                    By {{ comment.submitter.name }}
                                                 </span>
                                             </div>
                                             <span class="text-xs text-muted-foreground">
@@ -322,7 +322,7 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                                                 ]"
                                             >
                                                 <Check class="h-3 w-3" />
-                                                <span class="font-bold">{{ comment.validated_nb }}</span> validations
+                                                <span class="font-bold">{{ comment.validated_nb }}</span> Approuves
                                             </button>
                                             <button 
                                                 @click="submitAnswer(comment.comment_id, 'revocation')"
@@ -334,13 +334,13 @@ const submitAnswer = (commentId: number, answer: 'validation' | 'revocation') =>
                                                 ]"
                                             >
                                                 <X class="h-3 w-3" />
-                                                <span class="font-bold">{{ comment.revocation_nb }}</span> revocations
+                                                <span class="font-bold">{{ comment.revocation_nb }}</span> Désapprouves
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                                 <div v-if="comments.length === 0" class="text-center py-8 text-muted-foreground">
-                                    No comments yet in this league.
+                                    Pas encore de remarques dans cette ligue.
                                 </div>
                             </div>
                         </CardContent>

@@ -86,7 +86,7 @@ const sendInvitation = (userId: number) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-6">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+                <h1 class="text-2xl font-bold">Dashboard Admin</h1>
                 
                 <CreateUserForm v-if="currentTab === 'users'">
                     <Button>
@@ -108,8 +108,8 @@ const sendInvitation = (userId: number) => {
             <Tabs v-model="currentTab" class="w-full">
                 <TabsList class="flex w-full">
                     <TabsTrigger value="users" class="flex-1">Users</TabsTrigger>
-                    <TabsTrigger value="leagues" class="flex-1">Leagues</TabsTrigger>
-                    <TabsTrigger value="comments" class="flex-1">Comments</TabsTrigger>
+                    <TabsTrigger value="leagues" class="flex-1">Ligues</TabsTrigger>
+                    <TabsTrigger value="comments" class="flex-1">Remarques</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="users">
@@ -118,7 +118,7 @@ const sendInvitation = (userId: number) => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead class="w-[100px]">ID</TableHead>
-                                    <TableHead>Name</TableHead>
+                                    <TableHead>Nom</TableHead>
                                     <TableHead>Email</TableHead>
                                     <TableHead>Role</TableHead>
                                     <TableHead class="text-right">Action</TableHead>
@@ -138,10 +138,10 @@ const sendInvitation = (userId: number) => {
                                             class="cursor-pointer"
                                             @click="sendInvitation(user.id)"
                                         >
-                                            Send Invitation
+                                            Envoyer une invitation
                                         </Button>
                                         <span v-else class="text-xs text-muted-foreground">
-                                            Subscribed
+                                            Envoyé
                                         </span>
                                     </TableCell>
                                 </TableRow>
@@ -156,9 +156,9 @@ const sendInvitation = (userId: number) => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead class="w-[100px]">ID</TableHead>
-                                    <TableHead>Name</TableHead>
+                                    <TableHead>Nom</TableHead>
                                     <TableHead>Description</TableHead>
-                                    <TableHead>Users</TableHead>
+                                    <TableHead>Joueurs</TableHead>
                                     <TableHead class="text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -193,8 +193,8 @@ const sendInvitation = (userId: number) => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead class="w-[100px]">ID</TableHead>
-                                    <TableHead>User</TableHead>
-                                    <TableHead>Content</TableHead>
+                                    <TableHead>By</TableHead>
+                                    <TableHead>Commentaire</TableHead>
                                     <TableHead class="text-right">Date</TableHead>
                                 </TableRow>
                             </TableHeader>

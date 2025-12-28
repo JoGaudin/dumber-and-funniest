@@ -19,7 +19,7 @@ const page = usePage();
 
 <template>
     <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>My Leagues</SidebarGroupLabel>
+        <SidebarGroupLabel>Mes Ligues</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="league in leagues" :key="league.league_id">
                 <SidebarMenuButton
@@ -34,7 +34,7 @@ const page = usePage();
             </SidebarMenuItem>
             <SidebarMenuItem v-if="leagues.length === 0">
                 <div class="px-2 py-1.5 text-xs text-muted-foreground">
-                    No leagues joined yet.
+                    Pas encore de ligue...
                 </div>
             </SidebarMenuItem>
         </SidebarMenu>
