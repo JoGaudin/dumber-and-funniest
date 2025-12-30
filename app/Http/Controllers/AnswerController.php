@@ -64,18 +64,23 @@ class AnswerController extends Controller
             ->first();
 
         if ($leagueUser) {
-            $scoreRecord = \App\Models\LeagueUserCommentTypeScore::firstOrCreate(
-                [
+            $scoreChange = $validated['answer'] === 'validation' ? 1 : -1;
+
+            $scoreRecord = \App\Models\LeagueUserCommentTypeScore::where('league_user_id', $leagueUser->league_user_id)
+                ->where('comment_type_id', $comment->comment_type_id)
+                ->first();
+
+            if ($scoreRecord) {
+                \DB::table('league_user_comment_type_score')
+                    ->where('league_user_id', $leagueUser->league_user_id)
+                    ->where('comment_type_id', $comment->comment_type_id)
+                    ->update(['score' => \DB::raw("score + {$scoreChange}")]);
+            } else {
+                \App\Models\LeagueUserCommentTypeScore::create([
                     'league_user_id' => $leagueUser->league_user_id,
                     'comment_type_id' => $comment->comment_type_id,
-                ],
-                ['score' => 0]
-            );
-
-            if ($validated['answer'] === 'validation') {
-                $scoreRecord->increment('score');
-            } else {
-                $scoreRecord->decrement('score');
+                    'score' => $scoreChange,
+                ]);
             }
         }
 
